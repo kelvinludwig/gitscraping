@@ -2,9 +2,9 @@ const axios = require('axios')
 const BASE_URL = 'https://github.com'
 
 //Manages the calling of each processes during the scraping 
-const startScraper = async gitPath => {
+const startScraper = async (gitPath, options) => {
 	const url = `${BASE_URL}${gitPath}`
-	const resHtml = await axios.get(url)
+	const resHtml = await axios.get(url, options)
 	let currentPageHrefs = findAndAddFilesFromCurrentPage(String(resHtml.data))
 
 	const allFilesHref = await getAllFilesHref(currentPageHrefs)
@@ -84,6 +84,7 @@ const findAndAddFilesFromCurrentPage = html => {
 	}
 }
 
+//Returns an Array with the total lines and bytes of a file in GitHub.
 const getLinesAndBytesFromHtml = html => {
 	const regexToGetDataDiv = /(?<=<div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1">)(.|\n)*?<\/div>/gm
 	const regexToGetLineNumber = /\d+(?= line)/gm
@@ -107,6 +108,7 @@ const getLinesAndBytesFromHtml = html => {
 }
 
 //Converts the size found in byte number
+//If the File doesn't have information about line or size will be given the valor 0
 const getSizeInBytes = size => {
 	const sizeNumber = size.split(' ')[0]
 	const sizeOrder = size.split(' ')[1]
@@ -145,6 +147,7 @@ const getFilesExtension = hrefList => {
 	return hrefExtensionList
 }
 
+//Mount the response to the final pattern
 const mountResponse = async hrefList => {
 	const response = []
 
