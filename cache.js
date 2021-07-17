@@ -47,7 +47,7 @@ const readFromFile = filename => {
 	return new Promise(promiseCallback)
 }
 
-const getCachedPage = path => {
+const getOrCreateCachedPage = path => {
 
 	const filename = `cache/${slug(path)}.json`
 
@@ -98,7 +98,7 @@ const getPage = async (path) => {
 }
 
 module.exports = {
-  getCachedPage,
+  getOrCreateCachedPage,
   getPage,
   readFromFile,
   slug,

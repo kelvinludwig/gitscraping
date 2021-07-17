@@ -8,11 +8,11 @@ const startScraper = async (gitPath, options) => {
 	let currentPageHrefs = findAndAddFilesFromCurrentPage(String(resHtml.data))
 
 	const allFilesHref = await getAllFilesHref(currentPageHrefs)
-
 	const allFilesHrefAndExtension = getFilesExtension(allFilesHref)
+	const allFilesData = await getAllFilesData(allFilesHrefAndExtension)
+	const response = mountResponse(allFilesData)
 
-
-	return mountResponse(allFilesHrefAndExtension)
+	return response
 }
 
 //Function responsible for digging every folder in project and return all the files Href
@@ -23,7 +23,6 @@ const getAllFilesHref = async currentPageHrefs => {
 		//Goes to the Folder's URL and gets the next folders and the files inside each folder
 		for (const folder of currentPageHrefs.folders) {
 			const url = `${BASE_URL}${folder}`
-			console.log(url)
 			const resFolderHtml = await axios.get(url)
 			const filesAndFolders = findAndAddFilesFromCurrentPage(String(resFolderHtml.data))
 
@@ -148,47 +147,74 @@ const getFilesExtension = hrefList => {
 }
 
 //Mount the response to the final pattern
-const mountResponse = async hrefList => {
+const getAllFilesData = async hrefList => {
 	const response = []
 
 	for (const file of hrefList) {
 		const url = `${BASE_URL}${file.href}`
 		const resFileHtml = await axios.get(url)
+		console.log('url: ', url)
 		const filesAndFolders = getLinesAndBytesFromHtml(String(resFileHtml.data))
-		const resultOfIsExist = isExistExtension(response, file)
-		if(resultOfIsExist === false){
-			response.push({
-				extension: file.extensionType,
-				count: 1,
-				lines: parseInt(filesAndFolders.lines),
-				bytes: parseInt(filesAndFolders.sizeInBytes)
-			})
-		}else{
-			response[resultOfIsExist].count += 1
-			response[resultOfIsExist].lines+= parseInt(filesAndFolders.lines)
-			response[resultOfIsExist].bytes+= parseInt(filesAndFolders.sizeInBytes)
-		}
+		response.push({
+			extension: file.extensionType,
+			count: 1,
+			lines: parseInt(filesAndFolders.lines),
+			bytes: parseInt(filesAndFolders.sizeInBytes)
+		})
 	}
 	return response
 }
 
-const isExistExtension = (response, file) => {
-	for (const res of response) {
-		if(res.extension == file.extensionType){
-			return response.indexOf(res)
+const mountResponse = allFilesData => {
+	const response = []
+	const resCountEachExtension = countEachExtension(allFilesData)
+	let lines = 0, bytes = 0
+
+	for (const extension of resCountEachExtension) {
+		for (const fileData of allFilesData) {
+			if(fileData.extension === extension[0]){
+				lines += fileData.lines
+				bytes += fileData.bytes
+				// allFilesData.splice(allFilesData.indexOf(fileData), 1)
+			}
 		}
+
+
+		response.push({
+			extension: extension[0],
+			count: extension[1],
+			lines: lines,
+			bytes: bytes
+		})
+		lines = 0
+		bytes = 0
 	}
-	return false
+	return response
 }
 
+const countEachExtension = allFilesData => {
+	return Object.entries(
+		Array.from(allFilesData).reduce( (allExtensions, ext) => {
+			if(ext.extension in allExtensions){
+				allExtensions[ext.extension]++;
+			}else {
+				allExtensions[ext.extension] = 1;
+			}
+			return allExtensions;
+		}, {})
+	)
+}
+
+
 module.exports = {
+	countEachExtension,
 	findAndAddFilesFromCurrentPage,
 	findFoldersFromCurrentPage,
 	getAllFilesHref,
 	getFilesExtension,
 	getLinesAndBytesFromHtml,
 	getSizeInBytes,
-	isExistExtension,
+	getAllFilesData,
 	mountResponse,
 	startScraper
 }
