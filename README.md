@@ -30,6 +30,8 @@ Furthermore it's nice to have a good code editor: [VSCode](https://code.visualst
 This project use just the axios like dependencie, I tried to make it cleanest as possible!
 I could have used the [Express](https://expressjs.com/pt-br/) to build the server, or [Mocha](https://mochajs.org/) to build test, or [Cheerion](https://www.npmjs.com/package/cheerio) to build the scraper, but the intent of this project was to be the most clean as possible using Node.Js, even so I used the [Axios](https://www.npmjs.com/package/axios) to do my requests because they have a treatment better than the native Http from Node.js.
 
+If you want to download the Docker Image of this project just go in: [Docker](https://hub.docker.com/repository/docker/kelvinludwig/gitscraping_app)
+
 ### 🎲 Starting the server
 
 ```bash
