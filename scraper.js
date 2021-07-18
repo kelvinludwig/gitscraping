@@ -23,6 +23,7 @@ const getAllFilesHref = async currentPageHrefs => {
 		//Goes to the Folder's URL and gets the next folders and the files inside each folder
 		for (const folder of currentPageHrefs.folders) {
 			const url = `${BASE_URL}${folder}`
+			console.log('Folder url: ', url)
 			const resFolderHtml = await axios.get(url)
 			const filesAndFolders = findAndAddFilesFromCurrentPage(String(resFolderHtml.data))
 
@@ -35,7 +36,6 @@ const getAllFilesHref = async currentPageHrefs => {
 			}
 			auxiliarListForFolders.splice(auxiliarListForFolders.indexOf(folder), 1)
 		}
-
 		currentPageHrefs.folders = auxiliarListForFolders
 	} while (currentPageHrefs.folders.length != 0)
 
@@ -153,7 +153,7 @@ const getAllFilesData = async hrefList => {
 	for (const file of hrefList) {
 		const url = `${BASE_URL}${file.href}`
 		const resFileHtml = await axios.get(url)
-		console.log('url: ', url)
+		console.log('File url: ', url)
 		const filesAndFolders = getLinesAndBytesFromHtml(String(resFileHtml.data))
 		response.push({
 			extension: file.extensionType,
@@ -165,6 +165,7 @@ const getAllFilesData = async hrefList => {
 	return response
 }
 
+//Get the Array of files data and mount the final JSON to return
 const mountResponse = allFilesData => {
 	const response = []
 	const resCountEachExtension = countEachExtension(allFilesData)
@@ -172,7 +173,7 @@ const mountResponse = allFilesData => {
 
 	for (const extension of resCountEachExtension) {
 		for (const fileData of allFilesData) {
-			if(fileData.extension === extension[0]){
+			if (fileData.extension === extension[0]) {
 				lines += fileData.lines
 				bytes += fileData.bytes
 				// allFilesData.splice(allFilesData.indexOf(fileData), 1)
@@ -192,12 +193,13 @@ const mountResponse = allFilesData => {
 	return response
 }
 
+//Return an Array with the count of each extension type found
 const countEachExtension = allFilesData => {
 	return Object.entries(
-		Array.from(allFilesData).reduce( (allExtensions, ext) => {
-			if(ext.extension in allExtensions){
+		Array.from(allFilesData).reduce((allExtensions, ext) => {
+			if (ext.extension in allExtensions) {
 				allExtensions[ext.extension]++;
-			}else {
+			} else {
 				allExtensions[ext.extension] = 1;
 			}
 			return allExtensions;

@@ -1,3 +1,7 @@
-const cache = require('./cache')
+const http = require('http')
+const server = require('./server')
 
-cache.getOrCreateCachedPage('/kelvinludwig/OnePiece').catch(console.error)
+//Start the HTTP service listening in port 8080
+console.log('Running service...')
+const sv = http.createServer(server.requestListener)
+sv.listen(8080)

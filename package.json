@@ -6,5 +6,9 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1"
+  },
+  "scripts": {
+    "test-scraper": "node test/scraperTest.js"
   }
+
 }

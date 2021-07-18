@@ -21,10 +21,11 @@ const browserHeaders = {
 	'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
 }
 
+//Write in a File the response of a request about any project in git
 const writeToFile = (data, filename) => {
 	const promiseCallback = (resolve, reject) => {
 		fs.writeFile(filename, data, (error) => {
-			if(error){
+			if (error) {
 				reject(error)
 				return
 			}
@@ -35,10 +36,11 @@ const writeToFile = (data, filename) => {
 	return new Promise(promiseCallback)
 }
 
+//Read a previus response saved in a file in cache/
 const readFromFile = filename => {
 	const promiseCallback = async (resolve) => {
 		fs.readFile(filename, 'utf8', (error, contents) => {
-			if(error) {
+			if (error) {
 				resolve(null)
 			}
 			resolve(contents)
@@ -47,60 +49,60 @@ const readFromFile = filename => {
 	return new Promise(promiseCallback)
 }
 
+//start the scraper calling getPage() or return a cached response about a directory
 const getOrCreateCachedPage = path => {
-
 	const filename = `cache/${slug(path)}.json`
 
 	const promiseCallback = async (resolve, reject) => {
-		const cachedResponse = await readFromFile(filename) 
-		if(!cachedResponse){
+		const cachedResponse = await readFromFile(filename)
+		if (!cachedResponse) {
 			const result = await getPage(path)
 			await writeToFile(JSON.stringify(result), filename)
 			resolve(result)
 			return
 		}
-		console.log(JSON.parse(cachedResponse))
-		resolve(cachedResponse)
+		resolve(JSON.parse(cachedResponse))
 	}
 
 	return new Promise(promiseCallback)
 }
 
+//A slug function to clean a string before storage it
 const slug = str => {
-	str = str.replace(/^\s+|\s+$/g, ''); // trim
-	str = str.toLowerCase();
+	str = str.replace(/^\s+|\s+$/g, '') // trim
+	str = str.toLowerCase()
 
 	// remove accents, swap ñ for n, etc
-	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-	var to   = "aaaaeeeeiiiioooouuuunc------";
-	for (var i=0, l=from.length ; i<l ; i++) {
-			str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;"
+	var to = "aaaaeeeeiiiioooouuuunc------"
+	for (var i = 0, l = from.length; i < l; i++) {
+		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i))
 	}
 
 	str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-			.replace(/\s+/g, '-') // collapse whitespace and replace by -
-			.replace(/-+/g, '-'); // collapse dashes
+		.replace(/\s+/g, '-') // collapse whitespace and replace by -
+		.replace(/-+/g, '-') // collapse dashes
 
-	return str;
+	return str
 }
 
+//Gets the result of the scraper
 const getPage = async (path) => {
 	const option = {
 		headers: browserHeaders
 	}
 
 	const result = await scraper.startScraper(path, option)
-	
+
 	// return result
-	console.log(result)
 	return (result)
 
 }
 
 module.exports = {
-  getOrCreateCachedPage,
-  getPage,
-  readFromFile,
-  slug,
-  writeToFile
+	getOrCreateCachedPage,
+	getPage,
+	readFromFile,
+	slug,
+	writeToFile
 }
