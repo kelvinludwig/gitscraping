@@ -54,18 +54,39 @@ const getOrCreateCachedPage = path => {
 	const filename = `cache/${slug(path)}.json`
 
 	const promiseCallback = async (resolve, reject) => {
-		const cachedResponse = await readFromFile(filename)
-		if (!cachedResponse) {
-			const result = await getPage(path)
-			await writeToFile(JSON.stringify(result), filename)
-			resolve(result)
-			return
-		}
+		try {
+			const cachedResponse = await readFromFile(filename)
+			if (!cachedResponse) {
+				const result = await getPage(path)
+				await writeToFile(JSON.stringify(result), filename)
+				resolve(result)
+				return
+			}
 		resolve(JSON.parse(cachedResponse))
+		} catch (error) {
+			reject('GitHub project not found')
+		}
 	}
 
 	return new Promise(promiseCallback)
 }
+// //start the scraper calling getPage() or return a cached response about a directory
+// const getOrCreateCachedPage = path => {
+// 	const filename = `cache/${slug(path)}.json`
+
+// 	const promiseCallback = async (resolve, reject) => {
+// 		const cachedResponse = await readFromFile(filename)
+// 		if (!cachedResponse) {
+// 			const result = await getPage(path)
+// 			await writeToFile(JSON.stringify(result), filename)
+// 			resolve(result)
+// 			return
+// 		}
+// 		resolve(JSON.parse(cachedResponse))
+// 	}
+
+// 	return new Promise(promiseCallback)
+// }
 
 //A slug function to clean a string before storage it
 const slug = str => {
