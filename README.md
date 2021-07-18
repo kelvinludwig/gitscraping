@@ -33,7 +33,7 @@ I could have used the [Express](https://expressjs.com/pt-br/) to build the serve
 ### 🎲 Starting the server
 
 ```bash
-# Clone este repositório
+# Clone this repository
 $ git clone <https://github.com/kelvinludwig/gitscraping.git>
 
 # Go to project folder
