@@ -8,7 +8,7 @@
     "axios": "^0.21.1"
   },
   "scripts": {
-    "test-scraper": "node test/scraperTest.js",
+    "test": "node test/scraperTest.js",
     "start": "node index.js"
   }
 

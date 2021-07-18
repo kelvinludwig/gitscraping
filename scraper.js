@@ -1,18 +1,38 @@
 const axios = require('axios')
 const BASE_URL = 'https://github.com'
 
-//Manages the calling of each processes during the scraping 
+
+/**
+ * Manages the calling of each processes during the scraping 
+ * @param {*} gitPath 
+ * @param {*} options 
+ * @returns response
+ */
 const startScraper = async (gitPath, options) => {
 	const url = `${BASE_URL}${gitPath}`
-	const resHtml = await axios.get(url, options)
-	let currentPageHrefs = findAndAddFilesFromCurrentPage(String(resHtml.data))
-
-	const allFilesHref = await getAllFilesHref(currentPageHrefs)
-	const allFilesHrefAndExtension = getFilesExtension(allFilesHref)
-	const allFilesData = await getAllFilesData(allFilesHrefAndExtension)
-	const response = mountResponse(allFilesData)
-
-	return response
+	try {
+		const resHtml = await axios.get(url, options)
+		console.log('Status Code: ', resHtml.status)
+		let currentPageHrefs = findAndAddFilesFromCurrentPage(String(resHtml.data))
+	
+		const allFilesHref = await getAllFilesHref(currentPageHrefs)
+		const allFilesHrefAndExtension = getFilesExtension(allFilesHref)
+		const allFilesData = await getAllFilesData(allFilesHrefAndExtension)
+		const response = mountResponse(allFilesData)
+	
+		return response
+		
+	} catch (error) {
+		if (error.response.status == 404) {
+      throw {
+				msg: 'project not found'
+			}
+    } else {
+			throw {
+				msg: 'general error'
+			}
+		}
+	}
 }
 
 //Function responsible for digging every folder in project and return all the files Href

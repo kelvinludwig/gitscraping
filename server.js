@@ -1,7 +1,7 @@
 const cache = require('./cache')
 const fs = require('fs').promises
 
-const requestListener = async function (req, res) {
+const requestListener = async (req, res) => {
   if (req.url === '/') {
     fs.readFile('./index.html')
       .then(contents => {
@@ -16,12 +16,20 @@ const requestListener = async function (req, res) {
       })
   } else {
     if (req.url !== '/favicon.ico') {
-      const response = await cache.getOrCreateCachedPage(req.url).catch(console.error)
-      console.log('response: ', response)
-      res.writeHead(200)
-      res.end(JSON.stringify(response))
+      try {
+        const response = await cache.getOrCreateCachedPage(req.url)
+        console.log('response: ', response)
+        res.writeHead(200)
+        res.end(JSON.stringify(response))
+      } catch (error) {
+        if (error.msg == 'project not found') {
+          res.writeHead(404)
+        } else {
+          res.writeHead(400)
+        }
+        res.end(JSON.stringify(error) || null)
+      }
     }
-
   }
 }
 
