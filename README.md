@@ -9,7 +9,7 @@
 
 - To get the response about my example project: https://github.com/kelvinludwig/OnePiece
 
-- send a get request with Api Link/kelvinludwig/OnePiece and get what you need!!
+- send a get request to http://54.94.60.132:8080/kelvinludwig/OnePiece and get what you need!!
 
 Very simple, isn't??
 
