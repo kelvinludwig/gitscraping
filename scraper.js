@@ -35,7 +35,11 @@ const startScraper = async (gitPath, options) => {
 	}
 }
 
-//Function responsible for digging every folder in project and return all the files Href
+/**
+ * Function responsible for digging every folder in project and return all the files Href
+ * @param {*} currentPageHrefs 
+ * @returns currentPageHrefs.files
+ */
 const getAllFilesHref = async currentPageHrefs => {
 	let auxiliarListForFolders = currentPageHrefs.folders
 
@@ -62,7 +66,11 @@ const getAllFilesHref = async currentPageHrefs => {
 	return currentPageHrefs.files
 }
 
-//Find all folder's href for a html page sent
+/**
+ * Find all folder's href for a html page sent
+ * @param {*} html 
+ * @returns pagesHrefs
+ */
 const findFoldersFromCurrentPage = html => {
 	const regexToGetFolderHtmlRaw = /<svg aria-label="Directory"(.|\n)*?<\/a>/gm
 	const regexToGetHref = /(?<=href=")(.|\n)*?(?=")/gm
@@ -78,7 +86,12 @@ const findFoldersFromCurrentPage = html => {
 	}
 }
 
-//Find all file's href for a html page sent and merge with the folder's Href
+
+/**
+ * Find all file's href for a html page sent and merge with the folder's Href
+ * @param {*} html 
+ * @returns allHrefsTogether
+ */
 const findAndAddFilesFromCurrentPage = html => {
 	const foldersHrefs = findFoldersFromCurrentPage(html)
 
@@ -103,7 +116,11 @@ const findAndAddFilesFromCurrentPage = html => {
 	}
 }
 
-//Returns an Array with the total lines and bytes of a file in GitHub.
+/**
+ * Returns an Array with the total lines and bytes of a file in GitHub.
+ * @param {*} html 
+ * @returns { lines, sizeInBytes }
+ */
 const getLinesAndBytesFromHtml = html => {
 	const regexToGetDataDiv = /(?<=<div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1">)(.|\n)*?<\/div>/gm
 	const regexToGetLineNumber = /\d+(?= line)/gm
@@ -126,8 +143,12 @@ const getLinesAndBytesFromHtml = html => {
 	return { lines, sizeInBytes }
 }
 
-//Converts the size found in byte number
-//If the File doesn't have information about line or size will be given the valor 0
+/**
+ * Converts the size found in byte number 
+ * If the File doesn't have information about line or size will be given the valor 0
+ * @param {*} size 
+ * @returns sizeNumber
+ */
 const getSizeInBytes = size => {
 	const sizeNumber = size.split(' ')[0]
 	const sizeOrder = size.split(' ')[1]
@@ -149,7 +170,11 @@ const getSizeInBytes = size => {
 	}
 }
 
-//Returns an array with the extension of each href that will be accessed
+/**
+ * Returns an array with the extension of each href that will be accessed
+ * @param {*} hrefList 
+ * @returns hrefExtensionList
+ */
 const getFilesExtension = hrefList => {
 	const hrefExtensionList = []
 	const regexToSearchDot = /[.]/g
@@ -166,7 +191,11 @@ const getFilesExtension = hrefList => {
 	return hrefExtensionList
 }
 
-//Mount the response to the final pattern
+/**
+ * Mount the response to the final pattern
+ * @param {*} hrefList 
+ * @returns response
+ */
 const getAllFilesData = async hrefList => {
 	const response = []
 
@@ -185,7 +214,11 @@ const getAllFilesData = async hrefList => {
 	return response
 }
 
-//Get the Array of files data and mount the final JSON to return
+/**
+ * Get the Array of files data and mount the final JSON to return
+ * @param {*} allFilesData 
+ * @returns response
+ */
 const mountResponse = allFilesData => {
 	const response = []
 	const resCountEachExtension = countEachExtension(allFilesData)
@@ -213,7 +246,11 @@ const mountResponse = allFilesData => {
 	return response
 }
 
-//Return an Array with the count of each extension type found
+/**
+ * Return an Array with the count of each extension type found
+ * @param {*} allFilesData 
+ * @returns allExtensions
+ */
 const countEachExtension = allFilesData => {
 	return Object.entries(
 		Array.from(allFilesData).reduce((allExtensions, ext) => {

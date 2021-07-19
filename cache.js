@@ -21,7 +21,12 @@ const browserHeaders = {
 	'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
 }
 
-//Write in a File the response of a request about any project in git
+/**
+ * Write in a File the response of a request about any project in git
+ * @param {*} data 
+ * @param {*} filename 
+ * @returns Promise(promiseCallback)
+ */
 const writeToFile = (data, filename) => {
 	const promiseCallback = (resolve, reject) => {
 		fs.writeFile(filename, data, (error) => {
@@ -36,7 +41,11 @@ const writeToFile = (data, filename) => {
 	return new Promise(promiseCallback)
 }
 
-//Read a previus response saved in a file in cache/
+/**
+ * Read a previus response saved in a file in cache/
+ * @param {*} filename 
+ * @returns Promise(promiseCallback)
+ */
 const readFromFile = filename => {
 	const promiseCallback = async (resolve) => {
 		fs.readFile(filename, 'utf8', (error, contents) => {
@@ -49,29 +58,11 @@ const readFromFile = filename => {
 	return new Promise(promiseCallback)
 }
 
-// //start the scraper calling getPage() or return a cached response about a directory
-// const getOrCreateCachedPage = path => {
-// 	const filename = `cache/${slug(path)}.json`
-
-// 	const promiseCallback = async (resolve, reject) => {
-// 		try {
-// 			const cachedResponse = await readFromFile(filename)
-// 			if (!cachedResponse) {
-// 				const result = await getPage(path)
-// 				await writeToFile(JSON.stringify(result), filename)
-// 				resolve(result)
-// 				return
-// 			}
-// 		resolve(JSON.parse(cachedResponse))
-// 		} catch (error) {
-// 			reject('GitHub project not found')
-// 		}
-// 	}
-
-// 	return new Promise(promiseCallback)
-// }
-
-//start the scraper calling getPage() or return a cached response about a directory
+/**
+ * start the scraper calling getPage() or return a cached response about a directory
+ * @param {*} path 
+ * @returns result, error
+ */
 const getOrCreateCachedPage = path => {
 	const filename = `cache/${slug(path)}.json`
 	return new Promise(async (resolve, reject) => {
@@ -90,7 +81,11 @@ const getOrCreateCachedPage = path => {
 	})
 }
 
-//A slug function to clean a string before storage it
+/**
+ * A slug function to clean a string before storage it
+ * @param {*} str 
+ * @returns str
+ */
 const slug = str => {
 	str = str.replace(/^\s+|\s+$/g, '') // trim
 	str = str.toLowerCase()
@@ -109,7 +104,11 @@ const slug = str => {
 	return str
 }
 
-//Gets the result of the scraper
+/**
+ * Gets the result of the scraper
+ * @param {*} path 
+ * @returns result
+ */
 const getPage = async (path) => {
 	const option = {
 		headers: browserHeaders

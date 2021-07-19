@@ -1,6 +1,12 @@
 const cache = require('./cache')
 const fs = require('fs').promises
 
+
+/**
+ * Returns the response to a request received
+ * @param {*} req 
+ * @param {*} res 
+ */
 const requestListener = async (req, res) => {
   if (req.url === '/') {
     fs.readFile('./index.html')
@@ -22,6 +28,7 @@ const requestListener = async (req, res) => {
         res.writeHead(200)
         res.end(JSON.stringify(response))
       } catch (error) {
+        console.log('25', error)
         if (error.msg == 'project not found') {
           res.writeHead(404)
         } else {

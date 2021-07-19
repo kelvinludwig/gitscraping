@@ -6,6 +6,8 @@ npm-debug.log
 yarn.lock
 # exclude everything
 cache/*
+aws
+awscliv2.zip
 
 # exception to the rule
 !cache/.gitkeep 
