@@ -51,5 +51,9 @@ $ yarn start
 or
 $ npm start
 
+# Run the scraper tests
+$ yarn test
+
 # The server will be available in port :8080 - acesse <http://localhost:8080>
+# If you are using the Docker container the port will be the :3000 - acesse <http://localhost:3000>
 ```
